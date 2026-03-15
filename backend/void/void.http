@@ -1,0 +1,6 @@
+@void_HostAddress = http://localhost:5135
+
+GET {{void_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
