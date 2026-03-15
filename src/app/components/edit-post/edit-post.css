@@ -1,0 +1,99 @@
+/* ── Abas do editor ── */
+.tab-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #a3a3a3;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+  background: transparent;
+  cursor: pointer;
+  margin-bottom: -1px;
+}
+.tab-btn:hover {
+  color: #e5e5e5;
+}
+.tab-btn.tab-active {
+  color: #34d399;
+  border-bottom-color: #34d399;
+}
+
+/* ── Área de texto ── */
+.editor-textarea {
+  width: 100%;
+  min-height: 480px;
+  background: #0a0a0a;
+  border: 1px solid #262626;
+  border-top: none;
+  border-radius: 0 0 0.375rem 0.375rem;
+  padding: 1rem 1.25rem;
+  color: #e5e5e5;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.875rem;
+  line-height: 1.75;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.editor-textarea:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 1px #10b981;
+}
+
+/* ── Painel de preview ── */
+.editor-preview {
+  min-height: 480px;
+  background: #0a0a0a;
+  border: 1px solid #262626;
+  border-top: none;
+  border-radius: 0 0 0.375rem 0.375rem;
+  padding: 1.5rem 1.75rem;
+  color: #d4d4d8;
+  line-height: 1.75;
+}
+.editor-preview img {
+  max-width: 100%;
+  border-radius: 0.375rem;
+  margin: 1rem 0;
+  border: 1px solid #262626;
+}
+
+/* ── Prism syntax highlighting ── */
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #d4d4d4;
+  background: none;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.875rem;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  line-height: 1.5;
+  tab-size: 4;
+  hyphens: none;
+}
+pre[class*="language-"] {
+  padding: 1.25rem;
+  margin: 1.5em 0;
+  overflow: auto;
+  border-radius: 0.5rem;
+}
+:not(pre) > code[class*="language-"] {
+  background: #2d2d2d;
+  padding: 0.2em 0.4em;
+  border-radius: 0.3em;
+  white-space: normal;
+}
+.token.comment, .token.prolog, .token.doctype, .token.cdata { color: #6a9955; }
+.token.punctuation { color: #d4d4d4; }
+.token.namespace { opacity: .7; }
+.token.property, .token.tag, .token.boolean, .token.number,
+.token.constant, .token.symbol, .token.deleted { color: #b5cea8; }
+.token.selector, .token.attr-name, .token.string, .token.char,
+.token.builtin, .token.inserted { color: #ce9178; }
+.token.operator, .token.entity, .token.url,
+.language-css .token.string, .style .token.string { color: #d4d4d4; }
+.token.atrule, .token.attr-value, .token.keyword { color: #569cd6; }
+.token.function, .token.class-name { color: #dcdcaa; }
+.token.regex, .token.important, .token.variable { color: #d16969; }

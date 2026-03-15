@@ -1,0 +1,93 @@
+<div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+  <nav class="mb-8">
+    <a routerLink="/" class="text-neutral-400 hover:text-neutral-200 text-sm inline-flex items-center gap-2 transition-colors">
+      <span aria-hidden="true">&larr;</span> Voltar para Home
+    </a>
+  </nav>
+
+  <header class="mb-10">
+    <h1 class="text-3xl font-bold tracking-tight text-neutral-100 font-sans">Criar Novo Post</h1>
+    <p class="text-neutral-400 mt-2">Escreva suas anotações e aprendizados usando Markdown.</p>
+  </header>
+
+  <form (ngSubmit)="onSubmit()" #postForm="ngForm" class="space-y-6">
+    <div>
+      <label for="title" class="block text-sm font-medium text-neutral-300 mb-2">Título</label>
+      <input
+        type="text"
+        id="title"
+        name="title"
+        [(ngModel)]="title"
+        required
+        class="w-full bg-neutral-900 border border-neutral-700 rounded-md px-4 py-2 text-neutral-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-shadow"
+        placeholder="Ex: Entendendo Injeção de Dependência no Angular"
+      >
+    </div>
+
+    <div>
+      <label for="tags" class="block text-sm font-medium text-neutral-300 mb-2">Tags (separadas por vírgula)</label>
+      <input
+        type="text"
+        id="tags"
+        name="tags"
+        [(ngModel)]="tagsStr"
+        class="w-full bg-neutral-900 border border-neutral-700 rounded-md px-4 py-2 text-neutral-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-shadow font-mono text-sm"
+        placeholder="Ex: Angular, Frontend, TypeScript"
+      >
+    </div>
+
+    <div>
+      <!-- Barra de abas -->
+      <div class="flex items-center gap-1 border-b border-neutral-800 mb-0">
+        <button
+          type="button"
+          (click)="switchTab('write')"
+          [class.tab-active]="activeTab() === 'write'"
+          class="tab-btn">
+          ✏️ Escrever
+        </button>
+        <button
+          type="button"
+          (click)="switchTab('preview')"
+          [class.tab-active]="activeTab() === 'preview'"
+          class="tab-btn">
+          👁️ Preview
+        </button>
+        <span class="ml-auto text-xs text-neutral-600 font-mono pb-2 pr-1">
+          💡 Cole imagens com Ctrl+V
+        </span>
+      </div>
+
+      <!-- Aba: Escrever -->
+      @if (activeTab() === 'write') {
+        <textarea
+          #contentTextarea
+          id="content"
+          name="content"
+          [(ngModel)]="content"
+          required
+          rows="20"
+          (paste)="onPaste($event, contentTextarea)"
+          class="editor-textarea"
+          placeholder="Escreva seu post aqui em formato Markdown... Cole imagens com Ctrl+V!"
+        ></textarea>
+      }
+
+      <!-- Aba: Preview -->
+      @if (activeTab() === 'preview') {
+        <div class="editor-preview prose prose-invert prose-neutral max-w-none prose-pre:bg-[#1e1e1e] prose-pre:border prose-pre:border-neutral-800" [innerHTML]="renderedContent()">
+        </div>
+      }
+    </div>
+
+    <div class="flex justify-end pt-4">
+      <button
+        type="submit"
+        [disabled]="!postForm.valid"
+        class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 px-6 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Publicar Post
+      </button>
+    </div>
+  </form>
+</div>
