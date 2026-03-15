@@ -1,0 +1,117 @@
+import { Component, inject, signal, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { BlogService } from '../../services/blog.service';
+
+@Component({
+  selector: 'app-home',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
+  template: `
+    <div class="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <header class="mb-12 flex justify-between items-end border-b border-neutral-800 pb-6">
+        <div>
+          <h1 class="text-4xl font-bold tracking-tight text-neutral-100 font-sans">Meu Blog de Estudos</h1>
+          <p class="text-neutral-400 mt-2 font-mono text-sm">Anotações, códigos e aprendizados.</p>
+        </div>
+        <a routerLink="/create" class="text-sm font-medium text-emerald-400 hover:text-emerald-300 transition-colors">
+          + Novo Post
+        </a>
+      </header>
+
+      <div class="mb-10 space-y-6">
+        <input 
+          type="text" 
+          [value]="searchQuery()"
+          (input)="searchQuery.set($any($event.target).value)"
+          placeholder="Pesquisar posts por título ou conteúdo..." 
+          class="w-full bg-neutral-900 border border-neutral-800 rounded-md px-4 py-3 text-neutral-200 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-shadow font-mono text-sm"
+        >
+        
+        <div class="flex flex-wrap gap-2">
+          <button 
+            (click)="selectedTag.set(null)" 
+            [class.bg-emerald-600]="!selectedTag()" 
+            [class.text-white]="!selectedTag()" 
+            [class.bg-neutral-800]="selectedTag()"
+            [class.text-neutral-400]="selectedTag()"
+            class="px-3 py-1 rounded-full text-xs font-medium hover:bg-neutral-700 transition-colors">
+            Todos
+          </button>
+          @for (tag of allTags(); track tag) {
+            <button 
+              (click)="selectedTag.set(tag)" 
+              [class.bg-emerald-600]="selectedTag() === tag" 
+              [class.text-white]="selectedTag() === tag" 
+              [class.bg-neutral-800]="selectedTag() !== tag"
+              [class.text-neutral-400]="selectedTag() !== tag"
+              class="px-3 py-1 rounded-full text-xs font-medium hover:bg-neutral-700 transition-colors">
+              {{ tag }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="space-y-12">
+        @for (post of filteredPosts(); track post.id) {
+          <article class="group">
+            <div class="flex items-center gap-4 text-sm text-neutral-500 font-mono mb-2">
+              <time [dateTime]="post.createdAt.toISOString()">{{ post.createdAt | date:'dd MMM, yyyy' }}</time>
+              <div class="flex gap-2">
+                @for (tag of post.tags; track tag) {
+                  <span class="bg-neutral-800 text-neutral-300 px-2 py-0.5 rounded text-xs">{{ tag }}</span>
+                }
+              </div>
+            </div>
+            <h2 class="text-2xl font-semibold text-neutral-200 mb-3 group-hover:text-emerald-400 transition-colors">
+              <a [routerLink]="['/post', post.id]">{{ post.title }}</a>
+            </h2>
+            <p class="text-neutral-400 line-clamp-3 leading-relaxed">
+              {{ getExcerpt(post.content) }}
+            </p>
+            <div class="mt-4">
+              <a [routerLink]="['/post', post.id]" class="text-emerald-500 hover:text-emerald-400 text-sm font-medium inline-flex items-center gap-1">
+                Ler mais <span aria-hidden="true">&rarr;</span>
+              </a>
+            </div>
+          </article>
+        } @empty {
+          <p class="text-neutral-500 italic">Nenhum post encontrado para esta busca.</p>
+        }
+      </div>
+    </div>
+  `
+})
+export class HomeComponent {
+  blogService = inject(BlogService);
+
+  searchQuery = signal('');
+  selectedTag = signal<string | null>(null);
+
+  allTags = computed(() => {
+    const tags = new Set<string>();
+    this.blogService.posts().forEach(p => p.tags.forEach(t => tags.add(t)));
+    return Array.from(tags).sort();
+  });
+
+  filteredPosts = computed(() => {
+    let posts = this.blogService.posts();
+    const query = this.searchQuery().toLowerCase();
+    const tag = this.selectedTag();
+
+    if (query) {
+      posts = posts.filter(p => 
+        p.title.toLowerCase().includes(query) || 
+        p.content.toLowerCase().includes(query)
+      );
+    }
+    if (tag) {
+      posts = posts.filter(p => p.tags.includes(tag));
+    }
+    return posts;
+  });
+
+  getExcerpt(content: string): string {
+    return content.replace(/[#*\`_\\[\\]]/g, '').substring(0, 150) + '...';
+  }
+}
